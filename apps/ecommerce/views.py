@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect, reverse
-from .models import Products
+from .models import Products, Categories, Image
+from django.http import JsonResponse
+from .forms import UploadFileForm
+
 # Create your views here.
+
 def index(request):
     return render(request, 'ecommerce/index.html')
 
@@ -15,8 +19,12 @@ def orders(request):
 
 def products(request):
     products = Products.objects.all().filter(ongoing=True)
+    categories = Categories.objects.all()
+    upload = UploadFileForm()
     context = {
-            'products': products
+            'products': products,
+            'categories': categories,
+            'upload': upload
             }
     return render(request, 'ecommerce/products.html', context)
 
@@ -28,6 +36,11 @@ def test(request):
 
 def add_product(request):
     product = Products.objects.add_product(form_data=request.POST)
+    form = UploadFileForm(request.POST, request.FILES)
+    if form.is_valid():
+        new_image = Image.objects.create(image=form.cleaned_data['image'],product=product)
+    else:
+        print False
     return redirect(reverse('products'))
 
 def delete(request, id):
@@ -40,7 +53,13 @@ def edit(request, id):
     edit_product = Products.objects.edit_product(id=id, form_data=request.POST)
     return redirect(reverse('products'))
 
-def cart(request):
+def delete_category(request):
+    category_id = request.GET['category_id']
+    delete_category = Categories.objects.get(id=category_id)
+    delete_category.delete()
+    return JsonResponse({'response':True})
+
+  def cart(request):
     return render(request, 'ecommerce/cart.html')
 
 def ship(request):
