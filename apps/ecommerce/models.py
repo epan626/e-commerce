@@ -79,7 +79,7 @@ class ProductManager(models.Manager):
 			category = Categories.objects.create(category=form_data['new_category'])
 			new_product = Products.objects.create(product=form_data['name'], description=form_data['description'], inventory=form_data['inventory'], ongoing=True, category=category, price=form_data['price'])
 		else:
-			category = Categories.objects.retrieve_category(category_name=form_data['new_category'])
+			category = Categories.objects.retrieve_category(category_name=form_data['category'])
 			new_product = Products.objects.create(product=form_data['name'], description=form_data['description'], inventory=form_data['inventory'], ongoing=True, category=category, price=form_data['price'])
 		return new_product
 
