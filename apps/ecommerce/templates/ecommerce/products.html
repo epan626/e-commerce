@@ -178,7 +178,7 @@
           </thead>
           {% for product in products %}
           <tr>
-            <td></td>
+            <td>{% with product.imagetoproduct.all|first as image%}<img src="{{image.image.url}}" alt="">{% endwith %}</td>
             <td>{{product.id}}</td>
             <td>{{product.product}}</td>
             <td>{{product.inventory}}</td>
@@ -231,10 +231,6 @@
                     <div class="input-field">
                       <input type="text" name="inventory" value="{{product.inventory}}">
                       <label for="price">Inventory:</label>
-                    </div>
-                    <p>Images:</p>
-                    <div class="input-field">
-                      <input class="btn red" type="submit" name="upload" value="Upload">
                     </div>
                     <div class="input-field">
                       <input class="right" type="submit" name="" value="Edit Product">
