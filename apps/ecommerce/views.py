@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect, reverse
-from .models import Products
+from .models import Products, Categories
+from django.http import JsonResponse
+
 # Create your views here.
+
 def index(request):
     return render(request, 'ecommerce/index.html')
 
@@ -15,8 +18,10 @@ def orders(request):
 
 def products(request):
     products = Products.objects.all().filter(ongoing=True)
+    categories = Categories.objects.all()
     context = {
-            'products': products
+            'products': products,
+            'categories': categories
             }
     return render(request, 'ecommerce/products.html', context)
 
@@ -39,3 +44,9 @@ def delete(request, id):
 def edit(request, id):
     edit_product = Products.objects.edit_product(id=id, form_data=request.POST)
     return redirect(reverse('products'))
+
+def delete_category(request):
+    category_id = request.GET['category_id']
+    delete_category = Categories.objects.get(id=category_id)
+    delete_category.delete()
+    return JsonResponse({'response':True})

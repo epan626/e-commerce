@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^test$', views.test, name='test'),
     url(r'^add_product$', views.add_product, name='add_product'),
     url(r'^delete/(?P<id>\d+)$', views.delete, name='delete'),
-    url(r'^edit/(?P<id>\d+)$', views.edit, name='edit')
+    url(r'^edit/(?P<id>\d+)$', views.edit, name='edit'),
+    url(r'^delete_category$', views.delete_category, name='delete_category')
 
 ]
