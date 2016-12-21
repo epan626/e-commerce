@@ -7,10 +7,12 @@ urlpatterns = [
     url(r'^admin$', views.admin, name="admin"),
     url(r'^orders$', views.orders, name="orders"),
     url(r'^products$', views.products, name='products'),
-    url(r'^show$', views.show, name='show'),
+    url(r'^show(?P<id>\d+)$', views.show, name='show'),
     url(r'^test$', views.test, name='test'),
     url(r'^add_product$', views.add_product, name='add_product'),
     url(r'^delete/(?P<id>\d+)$', views.delete, name='delete'),
-    url(r'^edit/(?P<id>\d+)$', views.edit, name='edit')
-
+    url(r'^edit/(?P<id>\d+)$', views.edit, name='edit'),
+    url(r'^testcreate$', views.testcreate, name='test_create'),
+    url(r'^update$', views.update, name='update'),
+    url(r'^updatetest$', views.updatetest, name='updatestest'),
 ]

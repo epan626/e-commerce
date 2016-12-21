@@ -86,9 +86,17 @@ class ProductManager(models.Manager):
 		product.category = form_data['category']
 		product.save()
 		return product
+	def cost_product(self, quantity, price):
+		return quantity*price
+
+class OrdersManager(models.Manager):
+	def update_status(self, id, form_data):
+		return Orders.objects.filter(pk=id).update(status=form_data)
 
 class Products(models.Model):
 	product = models.CharField(max_length=30)
+	price = models.DecimalField(max_digits=5, decimal_places=2, default = 20.00)
+	quantity = models.PositiveSmallIntegerField(default=0)
 	description = models.CharField(max_length=255)
 	inventory = models.PositiveSmallIntegerField(default=0)
 	ongoing = models.CharField(max_length=5)
@@ -100,8 +108,13 @@ class Images(models.Model):
 	product = models.ForeignKey('Products', models.DO_NOTHING, related_name="imageofproduct")
 
 class Orders(models.Model):
+	total = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+	tax = models.DecimalField(max_digits=2, decimal_places=2, null=True, default =.09)
+	shipping = models.DecimalField(max_digits=3, decimal_places=2, null=True, default =5.00)
+	status = models.CharField(max_length=30, null=True, default = 'Order in Process')
 	added_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
+	objects = OrdersManager()
 
 class OrderProduct(models.Model):
 	order_product = models.ForeignKey('Orders', models.DO_NOTHING, related_name="ordersofproduct")

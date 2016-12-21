@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect, reverse
-from .models import Products
+from django.shortcuts import render, redirect, reverse, HttpResponse
+from .models import Products, Orders, Categories, OrderProduct, BillingAddress, ShippingAddress
 # Create your views here.
 def index(request):
     return render(request, 'ecommerce/index.html')
@@ -11,7 +11,42 @@ def admin(request):
     return render(request, 'ecommerce/admin.html')
 
 def orders(request):
-    return render(request, 'ecommerce/orders.html')
+    context ={
+        'orders': Orders.objects.all(),
+        'billings': BillingAddress.objects.all()
+    }
+    return render(request, 'ecommerce/orders.html', context)
+
+#dummy creation button#
+def testcreate(request):
+    category = Categories.objects.get(id=1)
+
+    new_product = Products.objects.create(product = 'Jameson', price = 19.99, quantity = 2, description = 'whiskey', inventory=1, ongoing=True, category=category)
+
+    new_product2 = Products.objects.create(product = 'Heineken', price = 23.99, quantity = 3, description = 'beer', inventory=1, ongoing=True, category=category)
+
+    quantity= new_product.quantity
+    price = new_product.price
+
+    quantity2= new_product2.quantity
+    price2 = new_product2.price
+
+
+    total = Products.objects.cost_product(quantity=quantity, price=price)
+    total2 = Products.objects.cost_product(quantity=quantity2, price=price2)
+
+    new_order = Orders.objects.create(total=total+total2)
+
+    new_orderproduct = OrderProduct.objects.create(order_product=new_order, product_order = new_product)
+
+    new_orderproduct2 = OrderProduct.objects.create(order_product=new_order, product_order = new_product2)
+
+    billing = BillingAddress.objects.create(first_name='eric', last_name='pan', address='123 fake street', city = 'burbank', state = 'CA', zipcode='91232', order = new_order)
+    shipping = ShippingAddress.objects.create(first_name='erica', last_name='tan', address='4321 real street', city = 'los angeles', state = 'CA', zipcode='91232', order = new_order)
+    return redirect('orders')
+
+def productcost(quantity, price):
+    return quantity*price
 
 def products(request):
     products = Products.objects.all().filter(ongoing=True)
@@ -20,8 +55,15 @@ def products(request):
             }
     return render(request, 'ecommerce/products.html', context)
 
-def show(request):
-    return render(request, 'ecommerce/show.html')
+def show(request, id):
+    order_id = Orders.objects.get(id=id)
+    context ={
+        'orders' : Orders.objects.get(id=id),
+        'shipping': ShippingAddress.objects.get(order=order_id),
+        'billing': BillingAddress.objects.get(order=order_id),
+        'orderproduct': OrderProduct.objects.filter(order_product=order_id)
+    }
+    return render(request, 'ecommerce/show.html', context)
 
 def test(request):
     return render(request, 'ecommerce/test.html')
@@ -29,6 +71,17 @@ def test(request):
 def add_product(request):
     product = Products.objects.add_product(form_data=request.POST)
     return redirect(reverse('products'))
+
+def update(request):
+    orderid = int(request.GET['orderid'])
+    status= str(request.GET['status'])
+    Orders.objects.update_status(id=orderid, form_data=status)
+    new_status= Orders.objects.get(id=orderid)
+    return redirect('orders')
+
+def updatetest(request):
+    print request.GET
+    return HttpResponse()
 
 def delete(request, id):
     product = Products.objects.get(id=id)
