@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-
+import unicodedata
 from django.db import models
 import re, bcrypt
 
@@ -75,15 +75,33 @@ class Categories(models.Model):
 
 class ProductManager(models.Manager):
 	def add_product(self, form_data):
-		category = Categories.objects.retrieve_category(category_name=form_data['new_category'])
-		new_product = Products.objects.create(product=form_data['name'], description=form_data['description'], inventory=1, ongoing=True, category=category)
+		if form_data['category'] == 'default' and len(form_data['new_category']):
+			category = Categories.objects.create(category=form_data['new_category'])
+			new_product = Products.objects.create(product=form_data['name'], description=form_data['description'], inventory=form_data['inventory'], ongoing=True, category=category, price=form_data['price'])
+		else:
+			category = Categories.objects.retrieve_category(category_name=form_data['category'])
+			new_product = Products.objects.create(product=form_data['name'], description=form_data['description'], inventory=form_data['inventory'], ongoing=True, category=category, price=form_data['price'])
 		return new_product
 
 	def edit_product(self, id, form_data):
 		product = Products.objects.get(id=id)
 		product.product = form_data['name']
 		product.description = form_data['description']
-		product.category = form_data['category']
+		product.inventory = form_data['inventory']
+		try:
+			price = float(form_data['price'])
+		except:
+			price = 0
+		if price != 0:
+			product.price = form_data['price']
+		else:
+			product.price = 0
+		if form_data['category'] != 'default':
+			category = Categories.objects.retrieve_category(category_name=form_data['category'])
+			product.category = category
+		elif len(form_data['new_category']):
+			new_category = Categories.objects.create(category=form_data['new_category'])
+			product.category = new_category
 		product.save()
 		return product
 	def cost_product(self, quantity, price):
@@ -93,12 +111,18 @@ class OrdersManager(models.Manager):
 	def update_status(self, id, form_data):
 		return Orders.objects.filter(pk=id).update(status=form_data)
 
+class Image(models.Model):
+	title = models.CharField(max_length=100, null=True)
+	image = models.FileField(upload_to = "apps/ecommerce/static/ecommerce/img", default ="admin_app/img/img.jpg")
+	product = models.ForeignKey('Products', related_name='imagetoproduct')
+
 class Products(models.Model):
 	product = models.CharField(max_length=30)
 	price = models.DecimalField(max_digits=5, decimal_places=2, default = 20.00)
 	quantity = models.PositiveSmallIntegerField(default=0)
 	description = models.CharField(max_length=255)
 	inventory = models.PositiveSmallIntegerField(default=0)
+	price = models.FloatField(null=True)
 	ongoing = models.CharField(max_length=5)
 	category = models.ForeignKey('Categories', models.DO_NOTHING, related_name="productofcategory")
 	objects = ProductManager()
