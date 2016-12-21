@@ -79,7 +79,7 @@ class ProductManager(models.Manager):
 			category = Categories.objects.create(category=form_data['new_category'])
 			new_product = Products.objects.create(product=form_data['name'], description=form_data['description'], inventory=form_data['inventory'], ongoing=True, category=category, price=form_data['price'])
 		else:
-			category = Categories.objects.retrieve_category(category_name=form_data['new_category'])
+			category = Categories.objects.retrieve_category(category_name=form_data['category'])
 			new_product = Products.objects.create(product=form_data['name'], description=form_data['description'], inventory=form_data['inventory'], ongoing=True, category=category, price=form_data['price'])
 		return new_product
 
@@ -106,7 +106,8 @@ class ProductManager(models.Manager):
 		return product
 
 class Image(models.Model):
-	image = models.FileField(upload_to = "apps/ecommerce/static/img", default ="admin_app/img/img.jpg")
+	title = models.CharField(max_length=100, null=True)
+	image = models.FileField(upload_to = "apps/ecommerce/static/ecommerce/img", default ="admin_app/img/img.jpg")
 	product = models.ForeignKey('Products', related_name='imagetoproduct')
 
 class Products(models.Model):

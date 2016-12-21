@@ -21,6 +21,9 @@ def products(request):
     products = Products.objects.all().filter(ongoing=True)
     categories = Categories.objects.all()
     upload = UploadFileForm()
+    for product in products:
+        for img in product.imagetoproduct.all():
+            print img.image
     context = {
             'products': products,
             'categories': categories,
@@ -38,7 +41,7 @@ def add_product(request):
     product = Products.objects.add_product(form_data=request.POST)
     form = UploadFileForm(request.POST, request.FILES)
     if form.is_valid():
-        new_image = Image.objects.create(image=form.cleaned_data['image'],product=product)
+        new_image = Image.objects.create(title=form.cleaned_data['title'],image=form.cleaned_data['image'],product=product)
     else:
         print False
     return redirect(reverse('products'))
