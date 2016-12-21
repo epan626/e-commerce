@@ -58,3 +58,9 @@ def delete_category(request):
     delete_category = Categories.objects.get(id=category_id)
     delete_category.delete()
     return JsonResponse({'response':True})
+
+  def cart(request):
+    return render(request, 'ecommerce/cart.html')
+
+def ship(request):
+    return render(request, 'ecommerce/ship.html')
