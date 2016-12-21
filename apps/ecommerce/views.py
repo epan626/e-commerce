@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, reverse
-from .models import Products, Categories
+from .models import Products, Categories, Image
 from django.http import JsonResponse
+from .forms import UploadFileForm
 
 # Create your views here.
 
@@ -19,9 +20,11 @@ def orders(request):
 def products(request):
     products = Products.objects.all().filter(ongoing=True)
     categories = Categories.objects.all()
+    upload = UploadFileForm()
     context = {
             'products': products,
-            'categories': categories
+            'categories': categories,
+            'upload': upload
             }
     return render(request, 'ecommerce/products.html', context)
 
@@ -33,6 +36,11 @@ def test(request):
 
 def add_product(request):
     product = Products.objects.add_product(form_data=request.POST)
+    form = UploadFileForm(request.POST, request.FILES)
+    if form.is_valid():
+        new_image = Image.objects.create(image=form.cleaned_data['image'],product=product)
+    else:
+        print False
     return redirect(reverse('products'))
 
 def delete(request, id):

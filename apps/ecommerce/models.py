@@ -105,6 +105,10 @@ class ProductManager(models.Manager):
 		product.save()
 		return product
 
+class Image(models.Model):
+	image = models.FileField(upload_to = "apps/ecommerce/static/img", default ="admin_app/img/img.jpg")
+	product = models.ForeignKey('Products', related_name='imagetoproduct')
+
 class Products(models.Model):
 	product = models.CharField(max_length=30)
 	description = models.CharField(max_length=255)
