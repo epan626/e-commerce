@@ -6,7 +6,6 @@ import math
 # Create your views here.
 
 def index(request):
-<<<<<<< HEAD
     if 'cart' not in request.session:
         request.session['cart'] = {}
         items = Products.objects.all()
@@ -17,11 +16,10 @@ def index(request):
 
     print request.session['cart']
     return render(request, 'ecommerce/index.html')
-=======
     # url(r'^products/category/(?P<category>\d+)/(?P<categorypage>\d+)$', views.product
 
     # Left side bar
-    categories = Categories.objects.all() 
+    categories = Categories.objects.all()
     # Products for specific category
     # products = Products.objects.filter(category=category)
     # Image for product
@@ -36,7 +34,7 @@ def index(request):
 def browse(request, category, categorypage):
     # url(r'^products/category/(?P<category>\d+)/(?P<categorypage>\d+)$', views.product
     # Left side bar
-    categories = Categories.objects.all() 
+    categories = Categories.objects.all()
     # Add image example
     # Images.objects.create(product_id=9, image='ecommerce/img/adventure-cat.png', main=True)
     # Products for specific category
@@ -83,7 +81,6 @@ def product(request, product_id):
     category = product.category.id
     related_product = Products.objects.filter(category_id=category).filter(ongoing=True).exclude(id=product_id)[0:6]
     related_image = Image.objects.filter(product__category_id=category)
->>>>>>> master
 
 
     context = {
