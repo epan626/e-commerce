@@ -6,6 +6,18 @@ import math
 # Create your views here.
 
 def index(request):
+<<<<<<< HEAD
+    if 'cart' not in request.session:
+        request.session['cart'] = {}
+        items = Products.objects.all()
+        for item in items:
+            pk = str(item.id)
+            quantity = {'quantity':1}
+            request.session['cart'][pk]=quantity
+
+    print request.session['cart']
+    return render(request, 'ecommerce/index.html')
+=======
     # url(r'^products/category/(?P<category>\d+)/(?P<categorypage>\d+)$', views.product
 
     # Left side bar
@@ -71,6 +83,7 @@ def product(request, product_id):
     category = product.category.id
     related_product = Products.objects.filter(category_id=category).filter(ongoing=True).exclude(id=product_id)[0:6]
     related_image = Image.objects.filter(product__category_id=category)
+>>>>>>> master
 
 
     context = {
@@ -187,7 +200,41 @@ def delete_category(request):
     return JsonResponse({'response':True})
 
 def cart(request):
-    return render(request, 'ecommerce/cart.html')
+    goods = {}
+    grandtotal=0
+    print request.session['cart']
+    print 'ANYTEXT'
+    for value, item in request.session['cart'].iteritems():
+        print 'ANYTEXT'
+        print item['quantity']
+        good = Products.objects.get(pk=int(value))
+        total = 25.00* float(item['quantity'])
+        grandtotal += total
+        my_list = {
+                    'name':good.product,
+                    'description':good.description,
+                    'price':25.00,
+                    'quantity':item['quantity'],
+                    'total':total,
+                    'id':good.id
+                    }
+        pk = str(good.id)
+        goods[pk]=my_list
+        print goods
+        print ('*'*90)
+    return render(request, 'ecommerce/cart.html', {'goods':goods, 'grandtotal':grandtotal})
+
+def more(request, id):
+    for value, item in request.session['cart'].iteritems():
+        print value
+        print item
+        if int(id) == int(value):
+            item['quantity'] = request.POST['select']
+
+    print request.session['cart']
+    print ('^'*90)
+    return redirect('cart')
+
 
 def ship(request):
     return render(request, 'ecommerce/ship.html')
