@@ -1,16 +1,86 @@
 from django.shortcuts import render, redirect, reverse, HttpResponse
-from .models import Products, Orders, Categories, OrderProduct, BillingAddress, ShippingAddress
-from django.shortcuts import render, redirect, reverse
-from .models import Products, Categories, Image
+from .models import Products, Image, Images, Orders, Categories, OrderProduct, BillingAddress, ShippingAddress
 from django.http import JsonResponse
 from .forms import UploadFileForm
+import math
 # Create your views here.
 
 def index(request):
-    return render(request, 'ecommerce/index.html')
+    # url(r'^products/category/(?P<category>\d+)/(?P<categorypage>\d+)$', views.product
 
-def product(request):
-    return render(request, 'ecommerce/product.html')
+    # Left side bar
+    categories = Categories.objects.all() 
+    # Products for specific category
+    # products = Products.objects.filter(category=category)
+    # Image for product
+    # images = Image.objects.filter(product__category_id=category)
+    context = {
+        # 'categorypage': categorypage,
+        'categories': categories,
+        # 'products': products,
+    }
+    return render(request, 'ecommerce/index.html', context)
+
+def browse(request, category, categorypage):
+    # url(r'^products/category/(?P<category>\d+)/(?P<categorypage>\d+)$', views.product
+    # Left side bar
+    categories = Categories.objects.all() 
+    # Add image example
+    # Images.objects.create(product_id=9, image='ecommerce/img/adventure-cat.png', main=True)
+    # Products for specific category
+    # Specify start and end of a series of product to display on the page
+    product_start = (int(categorypage)-1)*15
+    product_end = (int(categorypage))*15
+    products = Products.objects.filter(category=category).filter(ongoing=True)
+    # products1s = Products.objects.filter(category=category)[product_start:product_end-14]
+    # products2s = Products.objects.filter(category=category)[product_start+5:product_end-9]
+    # products3s = Products.objects.filter(category=category)[product_start+10:product_end-4]
+    # products1 = Products.objects.filter(category=category)[product_start+1:product_end-10]
+    # products2 = Products.objects.filter(category=category)[product_start+6:product_end-5]
+    # products3 = Products.objects.filter(category=category)[product_start+11:product_end]
+    productsout = Products.objects.filter(category=category).filter(ongoing=True)[product_start:product_end]
+    # Image (big image only) for product
+    images = Image.objects.filter(product__category_id=category)
+
+    # Max page needed to display products in a category
+    maxpages = math.ceil(len(products)/15.0)
+    context = {
+        'maxpages': int(maxpages),
+        'category': int(category),
+        'categorypage': categorypage,
+        'prevpage': int(categorypage)-1,
+        'nextpage': int(categorypage)+1,
+        'categories': categories,
+        'images': images,
+        # 'products1': products1,
+        # 'products2': products2,
+        # 'products3': products3,
+        # 'products1s': products1s,
+        # 'products2s': products2s,
+        # 'products3s': products3s,
+        'productsout': productsout,
+    }
+    return render(request, 'ecommerce/browse.html', context)
+
+def product(request, product_id):
+    product = Products.objects.get(id=product_id)
+    images = len(Image.objects.filter(product_id=product_id))
+    main_image1 = Image.objects.filter(product_id=product_id)
+    main_image_rest = Image.objects.filter(product_id=product_id)[0:5]
+    print Image.objects.filter(product_id=product_id)
+    category = product.category.id
+    related_product = Products.objects.filter(category_id=category).filter(ongoing=True).exclude(id=product_id)[0:6]
+    related_image = Image.objects.filter(product__category_id=category)[0:5]
+
+
+    context = {
+        'product': product,
+        'main_image_1': main_image1,
+        'main_image_rest': main_image_rest,
+        'related': related_product,
+        'related_image': related_image,
+    }
+    return render(request, 'ecommerce/product.html', context)
 
 def admin(request):
     return render(request, 'ecommerce/admin.html')
@@ -121,3 +191,6 @@ def cart(request):
 
 def ship(request):
     return render(request, 'ecommerce/ship.html')
+
+def add_cart(request, product_id):
+    return redirect(reverse('products'))
