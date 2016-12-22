@@ -15,8 +15,7 @@ urlpatterns = [
     url(r'^testcreate$', views.testcreate, name='test_create'),
     url(r'^update$', views.update, name='update'),
     url(r'^updatetest$', views.updatetest, name='updatestest'),
-    url(r'^delete_category$', views.delete_category, name='delete_category')
+    url(r'^delete_category$', views.delete_category, name='delete_category'),
     url(r'^cart$', views.cart, name='cart'),
-    url(r'^ship$', views.ship, name='ship'),
-
+    url(r'^ship$', views.ship, name='ship')
 ]

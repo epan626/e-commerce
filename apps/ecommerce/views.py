@@ -46,7 +46,7 @@ def testcreate(request):
 
     new_orderproduct2 = OrderProduct.objects.create(order_product=new_order, product_order = new_product2)
 
-    billing = BillingAddress.objects.create(first_name='eric', last_name='pan', address='123 fake street', city = 'burbank', state = 'CA', zipcode='91232', order = new_order)
+    billing = BillingAddress.objects.create(first_name='charlie', last_name='pan', address='123 fake street', city = 'burbank', state = 'CA', zipcode='91232', order = new_order)
     shipping = ShippingAddress.objects.create(first_name='erica', last_name='tan', address='4321 real street', city = 'los angeles', state = 'CA', zipcode='91232', order = new_order)
     return redirect('orders')
 
@@ -96,6 +96,7 @@ def update(request):
     new_status= Orders.objects.get(id=orderid)
     return redirect('orders')
 
+
 def updatetest(request):
     print request.GET
     return HttpResponse()
@@ -116,7 +117,7 @@ def delete_category(request):
     delete_category.delete()
     return JsonResponse({'response':True})
 
-  def cart(request):
+def cart(request):
     return render(request, 'ecommerce/cart.html')
 
 def ship(request):
