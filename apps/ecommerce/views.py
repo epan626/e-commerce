@@ -70,7 +70,7 @@ def product(request, product_id):
     print Image.objects.filter(product_id=product_id)
     category = product.category.id
     related_product = Products.objects.filter(category_id=category).filter(ongoing=True).exclude(id=product_id)[0:6]
-    related_image = Image.objects.filter(product__category_id=category)[0:5]
+    related_image = Image.objects.filter(product__category_id=category)
 
 
     context = {
