@@ -20,14 +20,8 @@ urlpatterns = [
     url(r'^testcreate$', views.testcreate, name='test_create'),
     url(r'^update$', views.update, name='update'),
     url(r'^updatetest$', views.updatetest, name='updatestest'),
-    url(r'^delete_category$', views.delete_category, name='delete_category')
+    url(r'^delete_category$', views.delete_category, name='delete_category'),
     url(r'^cart$', views.cart, name='cart'),
-<<<<<<< HEAD
     url(r'^more/(?P<id>\d+)$', views.more, name='more'),
     url(r'^ship$', views.ship, name='ship'),
-
-]
-=======
-    url(r'^ship$', views.ship, name='ship')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
->>>>>>> master
