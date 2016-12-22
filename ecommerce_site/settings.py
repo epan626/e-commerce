@@ -81,7 +81,8 @@ DATABASES = {
     }
 }
 
-
+MEDIA_ROOT = 'apps/ecommerce/static'
+MEDIA_URL = '/static/'
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
@@ -118,4 +119,4 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/static1/'
