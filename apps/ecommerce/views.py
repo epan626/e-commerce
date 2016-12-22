@@ -199,11 +199,7 @@ def delete_category(request):
 def cart(request):
     goods = {}
     grandtotal=0
-    print request.session['cart']
-    print 'ANYTEXT'
     for value, item in request.session['cart'].iteritems():
-        print 'ANYTEXT'
-        print item['quantity']
         good = Products.objects.get(pk=int(value))
         total = 25.00* float(item['quantity'])
         grandtotal += total
@@ -217,24 +213,27 @@ def cart(request):
                     }
         pk = str(good.id)
         goods[pk]=my_list
-        print goods
-        print ('*'*90)
     return render(request, 'ecommerce/cart.html', {'goods':goods, 'grandtotal':grandtotal})
 
 def more(request, id):
     for value, item in request.session['cart'].iteritems():
-        print value
-        print item
         if int(id) == int(value):
             item['quantity'] = request.POST['select']
-
-    print request.session['cart']
-    print ('^'*90)
     return redirect('cart')
 
 
 def ship(request):
     return render(request, 'ecommerce/ship.html')
 
+<<<<<<< HEAD
+def remove_from_cart(request, id):
+    key = str(id)
+    del request.session['cart'][key]
+    return redirect('cart')
+
+def card(request):
+    return render(request, 'ecommerce/card.html')
+=======
 def add_cart(request, product_id):
     return redirect(reverse('products'))
+>>>>>>> master

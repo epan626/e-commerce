@@ -30,42 +30,105 @@
 		</nav>
 		<nav>
 		    <div class="nav-wrapper">
-		      	<div class="col s12">
-		      		<a href="#!" class="breadcrumb">Review Cart</a>
-			        <a href="#!" class="">Shipping &amp; Payment</a>
-			        <a href="#!" class="breadcrumb">Place Order</a>
+		      	<div class="col s12 center">
+		      		<a href="{% url 'cart' %}" class="breadcrumb waves-effect waves-teal">Review Cart</a>
+			        <a href="#!" class="breadcrumb">Shipping &amp; Payment</a>
+              <a href="#!" class="breadcrumb"></a>
 		      	</div>
 		    </div>
 		 </nav>
 
 	    <!-- Page Layout here -->
-	    <div class="row">
-
-
-		    <div class="col s12">
-		    	<h3>Shipping Information</h3>
-
-
 		        <!-- start of loop  -->
 		        <div class="divider"></div>
 		 		<div class="section">
-		 			<form action="#" method="POST">
+          <div class="row">
+            <div class=" col sm12 m5 l5">
+              <h3>Shipping Information</h3>
+    		 			<form action="#" method="POST">{% csrf_token %}
+                <label for="first_name">First Name:</label>
+                <input type="text" name="first_name" value="" id="ShippingFirst">
+                <label for="last_name">Last Name:</label>
+                <input type="text" name="last_name" value="" id="ShippingLast">
+                <label for="address">Address:</label>
+                <input type="text" name="address" value="" id="ShippingAddress">
+                <label for="address2">Address 2:</label>
+                <input type="text" name="address2" value="" id="ShippingAddress2">
+                <label for="city">City:</label>
+                <input type="text" name="city" value="" id="ShippingCity">
+                <label for="state">State:</label>
+                <input type="text" name="state" value="" id="ShippingState">
+                <label for="zip">Zipcode</label>
+                <input type="text" name="zip" value="" id="ShippingZip">
+    		 			</form>
+            </div>
+            <div class="col m1 l1">
+            </div>
+            <div class=" col sm12 m5 l5">
+                <div>
+                  <h3>Billing Information
+                        <input type="checkbox" class="filled-in" id="filled-in-box" onclick="setBilling(this.checked);"/>
+                        <label for="filled-in-box">Same as shipping</label>
+                </div>
+    		 			<form action="#" method="POST">{% csrf_token %}
+                <label for="first_name">First Name:</label>
+                <input type="text" name="first_name" value="" id="BillingFirst">
+                <label for="last_name">Last Name:</label>
+                <input type="text" name="last_name" value="" id="BillingLast">
+                <label for="address">Address:</label>
+                <input type="text" name="address" value="" id="BillingAddress">
+                <label for="address2">Address 2:</label>
+                <input type="text" name="address2" value="" id="BillingAddress2">
+                <label for="city">City:</label>
+                <input type="text" name="city" value="" id="BillingCity">
+                <label for="state">State:</label>
+                <input type="text" name="state" value="" id="BillingState">
+                <label for="zip">Zipcode</label>
+                <input type="text" name="zip" value="" id="BillingZip">
+                <!-- card information -->
 
-		 			</form>
-		  		</div>
+    		 			</form>
+            </div>
+          </div>
+    		</div>
+        <div class="row">
+    			<div class="col s10 offset-s1">
+    				<a href="{% url 'card' %}" class="waves-effect waves-light btn" style="width:100%;">PROCEED TO CREDIT CARD INFO</a>
+    			</div>
+    		</div>
 
 		  		<!-- end of loop -->
 
 
 
 
-
 		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-	    <script type="text/javascript" src="{% static 'cart/js/materialize.js' %}"></script>
+	    <script type="text/javascript" src="{% static 'ecommerce/js/materialize.js' %}"></script>
 	    <script type="text/javascript">
 	    	$(document).ready(function() {
-    $('select').material_select();
-  });
+          $('select').material_select();
+        });
 	    </script>
+      <script type="text/javascript">
+      function setBilling(checked){
+        if (checked){
+        document.getElementById('BillingFirst').value = document.getElementById('ShippingFirst').value;
+        document.getElementById('BillingLast').value = document.getElementById('ShippingLast').value;
+        document.getElementById('BillingAddress').value = document.getElementById('ShippingAddress').value;
+        document.getElementById('BillingAddress2').value = document.getElementById('ShippingAddress2').value;
+        document.getElementById('BillingCity').value = document.getElementById('ShippingCity').value;
+        document.getElementById('BillingState').value = document.getElementById('ShippingState').value;
+        document.getElementById('BillingZip').value = document.getElementById('ShippingZip').value;
+      } else {
+        document.getElementById('BillingFirst').value = ''
+        document.getElementById('BillingLast').value = ''
+        document.getElementById('BillingAddress').value = ''
+        document.getElementById('BillingAddress2').value = ''
+        document.getElementById('BillingCity').value = ''
+        document.getElementById('BillingState').value = ''
+        document.getElementById('BillingZip').value = ''
+      }
+      };
+      </script>
 	</body>
 </html>
