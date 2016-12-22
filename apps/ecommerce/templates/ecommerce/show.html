@@ -13,6 +13,7 @@
         margin-top: 20px;
       }
     </style>
+    {% load ecommerce_extra %}
   </head>
   <body>
     <nav>
@@ -21,8 +22,8 @@
         <div class="row">
           <div class="col s4 offset-s2">
             <ul id="nav-mobile" class="hide-on-med-and-down">
-              <li><a href="">Orders</a></li>
-              <li><a href="">Products</a></li>
+              <li><a href="{% url 'orders' %}">Orders</a></li>
+              <li><a href="{% url 'product'%}">Products</a></li>
             </ul>
           </div>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
@@ -34,7 +35,23 @@
     <div class="row">
       <div class="col s4">
         <div class="box">
-
+            <div class="shippinginfo">
+                Order ID: {{orders.id}}
+                <p>Customer Shipping Info:</p>
+                <p>Name: {{shipping.first_name}}<p>
+                <p>Address: {{shipping.address}} </p>
+                <p>City: {{shipping.city}}</p>
+                <p>State {{shipping.state}}</p>
+                <p>Zip: {{shipping.zipcode}}</p>
+            </div>
+            <div class="billinginfo">
+                <p>Customer Billing Info:</p>
+                <p>Name: {{billing.first_name}}<p>
+                <p>Address: {{billing.address}} </p>
+                <p>City: {{billing.city}}</p>
+                <p>State {{billing.state}}</p>
+                <p>Zip: {{billing.zipcode}}</p>
+            </div>
         </div>
       </div>
       <div class="col s5 offset-s1">
@@ -48,14 +65,25 @@
               <th>Total</th>
             </tr>
           </thead>
+          {% for order in orderproduct %}
           <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{order.product_order.id}}</td>
+            <td>{{order.product_order.product}}</td>
+            <td>${{order.product_order.price}}</td>
+            <td>{{order.product_order.quantity}}</td>
+            <td>${{ order.product_order.quantity|prodcost:order.product_order.price }} </td>
           </tr>
+          {% endfor %}
         </table>
+        <div class="col s6">
+            Status: {{orders.status}}
+        </div>
+        <div class="col s7 offset-s6">
+            <p>Subtotal: ${{orders.total}}</p>
+            <p>Shipping: ${{orders.shipping}}</p>
+            <p>Total Price: ${{orders.total|totalprice:orders.shipping}}</p>
+
+        </div>
       </div>
     </div>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>

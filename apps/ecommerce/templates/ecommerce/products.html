@@ -46,6 +46,50 @@
       div.delete-product{
         max-height: 100% !important;
       }
+      .option-button{
+        display:none;
+      }
+      .delete-button{
+        display: none;
+      }
+      .first{
+        display:block;
+        width:235px;
+        height:100%;
+        border:1px solid #999;
+        padding:5px;
+      }
+      ul.category-list{
+        position:absolute;
+        top:32px;
+        width:235px;
+        display:none;
+      }
+      .category-list li{
+        max-height: 100% !important;
+        margin-bottom: 20px;
+        position: relative;
+        width: 350px;
+      }
+      div.add_new_category{
+        margin-top:150px;
+      }
+      div.modal-edit{
+        max-height: 100% !important;
+      }
+      input.hidden-input{
+        display: none;
+        width: 60% !important;
+        position: relative;
+      }
+      ul#category-options{
+        height: 120px;
+        overflow: scroll;
+      }
+      img{
+        height: 50px;
+        width: 50px;
+      }
     </style>
   </head>
   <body>
@@ -80,7 +124,7 @@
           <div id="modal1" class="modal add-product">
             <div class="modal-content">
               <h4>Add Product</h4>
-              <form class="" action="{% url 'add_product' %}" method="post">
+              <form class="" action="{% url 'add_product' %}" enctype="multipart/form-data" method="post">
                 {% csrf_token %}
                 <div class="input-field">
                   <input type="text" name="name" value="">
@@ -92,16 +136,27 @@
                 </div>
                 <div class="input-field">
                   <select class="" name="category">
-                    <option value="">t-shirt</option>
+                    <option value="default">Choose a category</option>
+                    {% for category in categories %}
+                      <option value="{{category.category}}">{{category.category}}</option>
+                    {% endfor %}
                   </select>
                   <label>Category</label>
                 </div>
                 <div class="input-field">
                   <input type="text" name="new_category" value="">
-                  <label for="new-category">or add a new category</label>
+                  <label for="new_category">Or add a new category:</label>
                 </div>
                 <div class="input-field">
-                  <input type="submit" name="upload" value="Upload">
+                  <input type="text" name="price" value="">
+                  <label for="price">Price:</label>
+                </div>
+                <div class="input-field">
+                  <input type="text" name="inventory" value="">
+                  <label for="price">Inventory:</label>
+                </div>
+                <div class="input-field">
+                  {{upload}}
                 </div>
                 <div class="input-field">
                   <input class="right" type="submit" name="" value="Add Product">
@@ -113,7 +168,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col s10 offset-s1">
+      <div class="col s8 offset-s2">
         <table>
           <thead>
             <tr>
@@ -127,7 +182,8 @@
           </thead>
           {% for product in products %}
           <tr>
-            <td></td>
+            <td>{% with product.imagetoproduct.all|first as image%}<img src="{{image.image.url}}" alt="">
+              {% endwith %}</td>
             <td>{{product.id}}</td>
             <td>{{product.product}}</td>
             <td>{{product.inventory}}</td>
@@ -135,7 +191,7 @@
             <td>
               <a class="modal-trigger btn red" href="#edit-{{product.id}}">Edit</a>
               <div id="edit-{{product.id}}" class="modal edit-product">
-                <div class="modal-content">
+                <div class="modal-content modal-edit">
                   <h4>Edit Product - ID {{product.id}}</h4>
                   <form class="" action="{% url 'edit' id=product.id%}" method="post">
                     {% csrf_token %}
@@ -147,18 +203,39 @@
                       <textarea name="description" class="materialize-textarea">{{product.description}}</textarea>
                       <label for="description">Description</label>
                     </div>
+                    <label>Category</label>
                     <div class="input-field">
-                      <select class="" name="category">
-                        <option value="">{{product.category.category}}</option>
-                      </select>
-                      <label>Category</label>
+                      <input type="hidden" class="hidden-category" name="category" value="default">
+                      <div class="first" name='category'>
+                        {% if product.category.category %}
+                          {{product.category.category}}
+                        {% else %}
+                          None
+                        {% endif %}
+                        <button class="option-button" name="">Edit</button>
+                      </div>
+                      <ul class="category-list" id="category-options">
+                        {% for category in categories %}
+                        <li class="category-item">
+                          <a href="#" class='category'>{{category.category}}</a>
+                          <button class="option-button" onclick="return false;">Edit</button>
+                          <input class="hidden-input right" type="text" name="" value="{{category.category}}">
+                          <a href="{{category.id}}" class="delete-button" onclick="return false;">Delete</a>
+                        </li>
+                        {% endfor %}
+                      </ul>
                     </div>
-                    <div class="input-field">
+                    <div class="input-field add_new_category">
                       <input type="text" name="new_category" value="">
-                      <label for="new-category">or add a new category</label>
+                      <label for="new-category">Or add a new category:</label>
                     </div>
                     <div class="input-field">
-                      <input type="submit" name="upload" value="Upload">
+                      <input type="text" name="price" value="{{product.price|floatformat:2}}">
+                      <label for="price">Price:</label>
+                    </div>
+                    <div class="input-field">
+                      <input type="text" name="inventory" value="{{product.inventory}}">
+                      <label for="price">Inventory:</label>
                     </div>
                     <div class="input-field">
                       <input class="right" type="submit" name="" value="Edit Product">
@@ -187,8 +264,63 @@
       $('select').material_select();
       $('a.modal-trigger').click(function(){
         $(this).siblings().modal()
-      })
-    });
+      });
+
+      $('a.delete-button').click(function(){
+        if (confirm("Are you sure you want to delete this category?")){
+          category_id = $(this).attr('href')
+          $(this).closest('li').remove()
+          $.get({
+            url: '{% url 'delete_category' %}',
+            data:{'category_id': category_id}
+          }).done(function(){
+            alert("Category deleted")
+          })
+          }
+        else {return false}
+        });
+      });
+
+      $(document).on('mouseenter', '.category-item', function () {
+        $(this).find(":button").show();
+        $(this).find("a.option-button").show();
+        $(this).find("a.delete-button").show();
+      }).on('mouseleave', '.category-item', function () {
+        $(this).find(":button").hide();
+        $(this).find(":input").hide();
+        $(this).find("a.option-button").hide();
+        $(this).find("a.delete-button").hide();
+      });
+
+      var isSelectShowed = false;
+      $('.first').click(function(){
+          if(isSelectShowed) {
+              $(this).next().hide();
+          }
+          else {
+              $(this).next().show();
+          }
+          isSelectShowed = !isSelectShowed;
+      });
+
+      $('ul.category-list a.category').click(function(e){
+          $('.first').text($(this).text());
+          $('.hidden-category').val($(this).text())
+          $('ul.category-list').hide();
+          $(this).addClass('current');
+          e.preventDefault();
+          isSelectShowed = false;
+      });
+      var showing = false
+      $('button.option-button').click(function(){
+        if(showing){
+          $(this).next().hide();
+          }
+        else{
+          $(this).next().show();
+        }
+        showing = !showing;
+      });
     </script>
   </body>
 </html>
