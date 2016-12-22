@@ -5,7 +5,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^product$', views.product, name='product'),
+    url(r'^category/(?P<category>\d+)/(?P<categorypage>\d+)$', views.browse, name='browse'),
+    url(r'^products/show/(?P<product_id>\d+)$', views.product, name='product'),
+    url(r'^(?P<product_id>\d+)/add_cart$', views.add_cart),
     url(r'^admin$', views.admin, name="admin"),
     url(r'^orders$', views.orders, name="orders"),
     url(r'^products$', views.products, name='products'),
