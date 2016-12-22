@@ -22,8 +22,8 @@
         <div class="row">
           <div class="col s4 offset-s2">
             <ul id="nav-mobile" class="hide-on-med-and-down">
-              <li><a href="">Orders</a></li>
-              <li><a href="">Products</a></li>
+              <li><a href="{% url 'orders' %}">Orders</a></li>
+              <li><a href="{% url 'product'%}">Products</a></li>
             </ul>
           </div>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
@@ -40,12 +40,19 @@
             <label for="search">Search</label>
           </div>
         </form>
+        <div class="testing">
+            <form action="testcreate" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="Create">
+            </form>
+        </div>
       </div>
       <div class="col s2 offset-s8 input-field">
-        <select class="" name="">
-          <option value="">1</option>
-          <option value="">2</option>
-          <option value="">3</option>
+        <select name="status">
+          <option value="#function query#">Show All</option>
+          <option value="Order in process">Order in process</option>
+          <option value="Shipped">Shipped</option>
+           <option value="Cancelled">Cancelled</option>
         </select>
       </div>
     </div>
@@ -62,14 +69,23 @@
               <th>Status</th>
             </tr>
           </thead>
+          {% for bill in billings %}
           <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td><a href="{% url 'show' id=bill.order.id %}">{{bill.order.id}}</a></td>
+            <td>{{bill.first_name}}</td>
+            <td>{{bill.order.added_at}}</td>
+            <td>{{bill.address}} {{bill.city}} {{bill.state}} {{bill.zipcode}}</td>
+            <td>{{bill.order.total}}</td>
+            <td>
+                <select name="status">
+                   <option  selected='selected' value="{{bill.order.status}}">{{bill.order.status}}</option>
+                   <option value="Order in process">Order in process</option>
+                   <option value="Shipped">Shipped</option>
+                   <option value="Cancelled">Cancelled</option>
+                </select>
+                <input class = 'upstatus' type="hidden" value="{{bill.order.id}}"></td>
           </tr>
+          {%  endfor %}
         </table>
       </div>
     </div>
@@ -78,6 +94,20 @@
     <script type="text/javascript">
     $(document).ready(function() {
       $('select').material_select();
+
+      $( "select" )
+        .change(function () {
+          $( "select option:selected" )
+              var orderid = $(this).parents().siblings('input').val()
+              var status = $(this).val()
+              console.log(status)
+              console.log(orderid)
+              $.ajax({
+                  type: 'GET',
+                  url: '{% url 'update' %}',
+                  data: {'status':status, 'orderid':orderid}
+              });
+          })
     });
     </script>
   </body>

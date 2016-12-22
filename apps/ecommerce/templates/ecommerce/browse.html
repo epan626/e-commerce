@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    {% load staticfiles %}
+    <link type="text/css" rel='stylesheet' href="{% static 'ecommerce/css/materialize.css'%}">
+    <style type="text/css">
+      div.box{
+        height: 100%;
+        width: 300px;
+        border: 1px solid black;
+        padding: 7px;
+        margin-top: 10px;
+      }
+      div.products{
+        /*width: 1000px;*/
+        /*height: 100%;*/
+        border: 1px solid black;
+        padding: 10px;
+        margin-top: 10px;
+      }
+      div.image{
+        height: 150px;
+        width: 150px;
+        border: 1px solid black;
+      }
+      div.product-display{
+        margin-bottom: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="nav-wrapper blue-grey lighten-3">
+        <a href="/" class="brand-logo">&nbsp;&nbsp;Dojo eCommerce</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="/">Shopping Cart (#)</a></li>
+        </ul>
+      </div>
+    </nav>
+                   <!--BODY STARTS HERE!!!!!-->
+            <!-- THIS IS THE LEFT HAND D.DIV SIDEBAR -->
+
+    <div class="row">
+        <div class="col s12 m4 l3">
+                      <!-- <div class="box"> -->
+              <input type="text" name="" value="" placeholder="product name">
+          <ul class='collection with-header'>
+            <li class='collection-header'>Categories</li>
+            <!-- <li class="collection-item">Tshirts</li> -->
+            {% for category in categories %}
+            <li class="collection-item"><a href="/category/{{category.id}}/1">{{category.category}}</a></li>
+            {% endfor %}
+          </ul>
+                    <ul class='collection'>
+                          <li class="collection-item">
+                              <label for="sorts">Sorted by:</label>
+                              <select id="sorts">
+                                  <option value="Price">Price</option>
+                                  <option value="Popular">Popular</option>
+                              </select>
+                          </li>
+                          <!-- <li class="collection-item">
+                            <a class="waves-effect waves-light btn">button</a>
+<a class="waves-effect waves-light btn"><i class="material-icons left">cloud</i>button</a>
+<a class="waves-effect waves-light btn"><i class="material-icons right">cloud</i>button</a>
+                          </li> -->
+                    </ul>     
+                        <!-- </div> -->
+        </div>
+                <!--END SIDEBAR-->
+
+                <!--RIGHT HAND D.DIV MAIN-->
+        <div class="col s12 m8 l9">
+                 <!--INSIDE RIGHT HAND D.DIV MAIN-->
+            <div class="row">
+
+                <div class="col s12 m8 l9"> <!-- Note that "m4 l3" was added -->
+                    <!--  Page Name And Number -->
+                  {% for categor in categories %}
+                    {% if categor.id == category %}
+                      <h5>{{categor.category}} (page {{categorypage}})</h5>
+                    {% endif %}
+                  {% endfor %}
+
+                           <!--  
+                        9-columns-wide on large screens,
+                        8-columns-wide on medium screens,
+                        12-columns-wide on small screens  -->
+
+                </div>
+
+                <div class="col s12 m6 l3"> <!-- Note that "m8 l9" was added -->
+                    <ul class='collection'>
+                          <li class='collection-item'>
+                              {% if maxpages == 1 %}
+                                <a href="/category/{{category}}/1">First</a>
+                              {% else %}
+                                <a href="/category/{{category}}/1">First</a> |
+                                {% if prevpage > 0 %}
+                                <a href="/category/{{category}}/{{prevpage}}">prev</a> |
+                                {% endif %}
+                                {{categorypage}} |
+                                {% if maxpages >= nextpage %}
+                                <a href="/category/{{category}}/{{nextpage}}">next</a>
+                                {% endif %} 
+                                <a href="/category/{{category}}/{{maxpages}}">Last</a>
+                              {% endif %}
+                          </li>
+                          <!-- <li class="collection-item">
+                            <a class="waves-effect waves-light btn">button</a>
+<a class="waves-effect waves-light btn"><i class="material-icons left">cloud</i>button</a>
+<a class="waves-effect waves-light btn"><i class="material-icons right">cloud</i>button</a>
+                          </li> -->
+                    </ul>
+                                    <!-- Teal page content
+                                          This content will be:
+                                      3-columns-wide on large screens,
+                                      4-columns-wide on medium screens,
+                                      12-columns-wide on small screens  -->
+
+                </div>
+            </div>
+            
+            <div class="row product-display products">
+                <div class="row">
+                    {% for product in productsout %}
+                    <div class="col s12 l4">
+                        <div class="col s6 l4">
+                            <div class="materialboxed">
+                              {% for image in images %}
+                                {% if image.product.id == product.id %}
+                                <img class="responsive-img" src="{% static image.image %}">
+                                {% endif %}
+                              {% endfor %}
+                            </div>
+                            <a href="/products/show/{{product.id}}">{{product.product}} </a>
+                        </div>
+                        <!-- <div class="col s6 l5 flow-text">   
+                                <a href="/products/show/{{product.id}}">{{product.product}} </a>  
+                        </div> -->
+                    </div>
+                    {% endfor %}
+                    <!--END ROW-->
+                </div> 
+
+                <!--END PRODUCTS DISPLAY-->
+            </div>
+            <div class="row">
+                <div class="col s10 offset-s2">
+                    Page {{categorypage}} of {{maxpages}}
+                </div>
+            </div>
+        </div>
+    
+    </div>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="{% static 'ecommerce/js/materialize.js'%}"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+      $('select').material_select();
+      $('.materialboxed').materialbox();
+      
+    });
+    </script>
+  </body>
+</html>
