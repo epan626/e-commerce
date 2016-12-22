@@ -86,6 +86,10 @@
         height: 120px;
         overflow: scroll;
       }
+      img{
+        height: 50px;
+        width: 50px;
+      }
     </style>
   </head>
   <body>
@@ -178,7 +182,8 @@
           </thead>
           {% for product in products %}
           <tr>
-            <td>{% with product.imagetoproduct.all|first as image%}<img src="{{image.image.url}}" alt="">{% endwith %}</td>
+            <td>{% with product.imagetoproduct.all|first as image%}<img src="{{image.image.url}}" alt="">
+              {% endwith %}</td>
             <td>{{product.id}}</td>
             <td>{{product.product}}</td>
             <td>{{product.inventory}}</td>

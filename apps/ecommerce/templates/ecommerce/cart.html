@@ -29,92 +29,113 @@
 		</nav>
 		<nav>
 		    <div class="nav-wrapper">
-		      	<div class="col s12">
-		      		<a href="#!" class="breadcrumb">Review Cart</a>
-			        <a href="#!" class="breadcrumb">Shipping &amp; Payment</a>
-			        <a href="#!" class="breadcrumb">Place Order</a>
+		      	<div class="col s12 center">
+		      		<a href="{% url 'cart' %}" class="breadcrumb">Review Cart</a>
+			        <a href="#!" class="breadcrumb"></a>
 		      	</div>
 		    </div>
 		 </nav>
+		<div class="row">
+			<div class="col s10">
+				<p>MY CART {{goods|length}} ITEM(S)</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col s10 offset-s1">
+				<a href="{% url 'ship' %}" class="waves-effect waves-light btn" style="width:100%;"><i class="material-icons center">lock </i>  CHECKOUT</a>
+			</div>
+		</div>
 
-	    <!-- Page Layout here -->
-	    <div class="row">
+	    <!-- Post Nav -->
 
 
-		    <div class="col s12">
-		    	<h3>Shopping Cart</h3>
-				<div class="row bvert">
-		    		<div class="col s5">
-		    			<h3></h3>
-		    		</div>
 
-					<div class="col s2">
-						<p>Price</p>
+		        <!-- start of cart loop  -->
+		        	{% for product, item in goods.iteritems %}
+					<div class="row">
+						<div class="col s12 m12 l12">
+					 		<div class="card horizontal small">
+						    		<div class="card-image">
+						    			<img class="responsive-img" src="{% static 'ecommerce/images/afrocat.jpg' %}">
+						    		</div>
+										<div class="card-stacked">
+										<div class="card-content">
+						    			<h6><strong>{{item.name}}</strong></h6>
+						    			<p>{{item.description}}</p>
+						    			<p>${{item.total|floatformat:2}}</p>
+											<p>Qty:</p>
+						    			<form action="{% url 'more' id=item.id %}" method="POST">
+			                  {% csrf_token %}
+						    				<div class=".input-field col s6 m2 l1">
+						    					<select class="browser-default" onChange="this.form.submit()" id="selectOpt" name="select">
+			                      <option>{{item.quantity}}</option>
+						    						<option value="1">1</option>
+						    						<option value="2">2</option>
+						    						<option value="3">3</option>
+						    						<option value="4">4</option>
+						    						<option value="5">5</option>
+						    						<option value="6">6</option>
+						    					</select>
+						    				</div>
+						    			</form><br><br><br>
+											<a href="{% url 'remove_from_cart' id=item.id %}">REMOVE ITEM</a>
+										</div>
+										</div>
+					  	</div>
+						</div>
 					</div>
-					<div class="col s2">
-						<p>Quantity</p>
+						{% endfor %}
+					<!-- end of cart loop -->
+					<div class="row">
+						<div class="col s10 offset-s1">
+							<a class="waves-effect waves-light btn" style="width:100%;"><i class="material-icons center">redeem </i>  CONTINUE SHOPPING</a>
+						</div>
 					</div>
-					<div class="col s2">
-						<p>Total</p>
+
+          <div class="divider"></div>
+      		<div class="row"></div>
+					<div class="row">
+						<div class="col s10 offset-s1">
+							<nav>
+						    <div class="nav-wrapper">
+						      <a href="#" class="brand-logo">MY CART</a>
+						    </div>
+						  </nav>
+							<nav>
+						    <div class="nav-wrapper">
+						      <a href="#">SUBTOTAL</a>
+						      <ul id="nav-mobile" class="right hide-on-med-and-down">
+						        <li><a href="#">${{grandtotal|floatformat:2}}</a></li>
+						      </ul>
+						    </div>
+						  </nav>
+							<nav>
+						    <div class="nav-wrapper">
+									<div class="row">
+										<div class="col s10 offset-s1 brand-logo">
+											<a href="{% url 'ship' %}" class="waves-effect waves-light btn" style="width:100%;">CHECKOUT</a>
+										</div>
+									</div>
+						      </ul>
+						    </div>
+						  </nav>
+						</div>
 					</div>
-		   		</div>
 
-		        <!-- start of loop  -->
-		        	{% for product in products %}
-		        	<p>{{product.name}}hi</p>
-		        	{% endfor %}
-		        <div class="divider"></div>
-		 		<div class="section">
-		   			<div class="row">
-			    		<div class="col s2">
-			    			<img class="responsive-img" src="{% static 'cart/images/afroCat.jpeg' %}">
-			    		</div>
-			    		<div class="col s3">
-			    			<h5>Product Name</h5>
-			    			<p>product description</p>
-			    		</div>
-			    		<div class="col s2">
-			    			<p>$ product.price</p>
-			    		</div>
-			    		<div class="col s2">
-
-			    			<form>
-			    				<div class=".input-field">
-			    					<select class="browser-default">
-			    						<option value="1">1</option>
-			    						<option value="2">2</option>
-			    						<option value="3">3</option>
-			    						<option value="4">4</option>
-			    						<option value="5">5</option>
-			    						<option value="6">6</option>
-			    					</select>
-			    				</div>
-			    			</form>
-			    		
-			    		</div>
-			    		<div class="col s2">
-			    			<p>$total after adjustments</p>
-			    		</div>
-			   		</div>
-		  		</div>
-
-		  		<!-- end of loop -->
-		  		 <div class="row">
-		  		 	<div class="col s10"></div>
-		  		 	<div class="col s2">
-		  		 		<a href="{% url 'ship' %}">Proceed to Billing</a>
-		  		 	</div>
-		  		 </div>
 
 
 
 
 		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-	    <script type="text/javascript" src="{% static 'cart/js/materialize.js' %}"></script>
+	    <script type="text/javascript" src="{% static 'ecommerce/js/materialize.js' %}"></script>
 	    <script type="text/javascript">
 	    	$(document).ready(function() {
-    $('select').material_select();
-  });
+            $('select').material_select();
+        });
+        function mn_select(){
+          var choice = document.getElementById('selectOpt');
+          alert(myselect.options[myselect.selectedIndex].value);
+        };
 	    </script>
 	</body>
 </html>

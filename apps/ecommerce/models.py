@@ -113,7 +113,7 @@ class OrdersManager(models.Manager):
 
 class Image(models.Model):
 	title = models.CharField(max_length=100, null=True)
-	image = models.FileField(upload_to = "apps/ecommerce/static/ecommerce/img", default ="admin_app/img/img.jpg")
+	image = models.FileField(upload_to = "ecommerce/img", default ="admin_app/img/img.jpg")
 	product = models.ForeignKey('Products', related_name='imagetoproduct')
 
 class Products(models.Model):
